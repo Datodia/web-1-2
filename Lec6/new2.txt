@@ -1,0 +1,15 @@
+ -File: main.js
+ -File: new.txt
+ -File: new2.txt
+ -File: package.json
+Dir: second
+Dir: test
+ -File: second.js
+ -File: first.txt
+Dir: third
+ -File: second.txt
+Dir: four
+ -File: third.js
+Dir: five
+ -File: four.txt
+ -File: file.js
