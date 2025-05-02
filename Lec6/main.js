@@ -15,7 +15,7 @@ const moment = require('moment')
 async function main(){
     const [,,command, title, content] = process.argv
 
-    const raedData = await fs.readFile('posts.json', 'utf-8')
+    const raedData = await fs.readFile('posts.json', 'utf-8') || '[]'
     const posts = JSON.parse(raedData)
 
     if(command === 'add'){
