@@ -1,0 +1,19 @@
+{
+  "name": "lec9",
+  "version": "1.0.0",
+  "main": "main.js",
+  "bin": {
+    "lec8-cli": "main.js",
+    "phone-cli": "phone.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "commander": "^13.1.0"
+  }
+}
