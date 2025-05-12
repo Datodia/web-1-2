@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "name": "ironman",
+        "genre": "fantastic",
+        "rating": 7.8
+    },
+    {
+        "id": 2,
+        "name": "spiderman",
+        "genre": "fantastic",
+        "rating": 9.5
+    },
+    {
+        "id": 3,
+        "name": "anabell",
+        "genre": "horor",
+        "rating": 7.5
+    },
+    {
+        "id": 4,
+        "name": "chak",
+        "genre": "horor",
+        "rating": 1.5
+    },
+    {
+        "id": 5,
+        "name": "classmates",
+        "genre": "horor",
+        "rating": 9.5
+    },
+    {
+        "id": 6,
+        "name": "hangover",
+        "genre": "comedy",
+        "rating": 5.5
+    }
+]
