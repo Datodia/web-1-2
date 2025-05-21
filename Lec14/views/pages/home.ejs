@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <h1>Homepage</h1>
+    <a href="/create">Create New User</a>
+    <% users.forEach(el => { %>
+        <div class="card">
+            <h1><%= el.name %></h1>
+            <h1><%= el.age %></h1>
+            <a href="/api/users/<%= el.id %>/details">Details</a>
+            <a href="/api/users/<%= el.id %>/update">Update</a>
+            <form action="/api/users/<%= el.id %>/delete" method="post">
+                <button>Delete</button>
+            </form>
+        </div>
+    <% }) %>
+</body>
+</html>

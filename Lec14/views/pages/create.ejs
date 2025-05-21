@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create new user</title>
+</head>
+<body>
+    <h1>Create new user</h1>
+    <a href="/">Back</a>
+    
+    <form action="/api/users" method="post">
+        <input type="text" name="name" placeholder="User Name" required>
+        <input type="number" name="age" placeholder="User age" required>
+
+        <button>Submit</button>
+    </form>
+</body>
+</html>
