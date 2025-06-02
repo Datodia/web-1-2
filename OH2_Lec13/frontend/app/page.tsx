@@ -17,7 +17,7 @@ export default function Home() {
   const [img, setImg] = useState<any | null>(null)
 
   const getAllusers = async () => {
-    const resp = await fetch('http://localhost:4000/users')
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/users`)
     const data = await resp.json()
     setUsers(data)
   }
@@ -35,7 +35,7 @@ export default function Home() {
     formData.append('email', email)
     formData.append('avatar', img[0])
 
-    const resp = await fetch('http://localhost:4000/users', {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/users`, {
       method: "POST",
       body: formData
     })
@@ -45,7 +45,7 @@ export default function Home() {
   }
 
   const handleDelete = async (id: number) => {
-    const resp = await fetch(`http://localhost:4000/users/${id}`, {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/users/${id}`, {
       method: "DELETE"
     })
 
