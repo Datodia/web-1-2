@@ -26,7 +26,7 @@ authRouter.post('/sign-up', async (req, res) => {
 })
 
 authRouter.post('/sign-in', async (req, res) => {
-    const { email, password } = req.body
+    const { email, password, stayLoggedIn } = req.body
     if (!email || !password) return res.status(400).json({ error: "fields ara requred" })
 
     const existUser = await userModel.findOne({ email: email.toLowerCase() }).select('password')
@@ -43,7 +43,7 @@ authRouter.post('/sign-in', async (req, res) => {
         userId: existUser._id
     }
 
-    const accessToken = jwt.sign(payLoad, process.env.JWT_SECRET, {expiresIn: '1h'})
+    const accessToken = jwt.sign(payLoad, process.env.JWT_SECRET, {expiresIn: stayLoggedIn ? '1d' : '1h'})
     res.json({accessToken})
 })
 
