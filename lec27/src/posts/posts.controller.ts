@@ -3,14 +3,15 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { HasUserId } from 'src/common/guards/has-user-id.guard';
-
+import { IsAuthGuard } from 'src/auth/guards/isAuth.guard';
+import { UserId } from 'src/users/decorators/user.decorator';
+@UseGuards(IsAuthGuard)
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  @UseGuards(HasUserId)
-  create(@Headers('user-id') userId: string, @Body() createPostDto: CreatePostDto) {
+  create(@UserId() userId: string, @Body() createPostDto: CreatePostDto) {
     return this.postsService.create(createPostDto, userId);
   }
 

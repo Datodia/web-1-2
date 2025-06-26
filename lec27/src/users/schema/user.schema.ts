@@ -19,6 +19,13 @@ export class User {
     email: string
 
     @Prop({
+        type: String,
+        required: true,
+        select: false
+    })
+    password: string
+
+    @Prop({
         type: Number,
         required: true
     })
