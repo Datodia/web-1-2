@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Headers, Query } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { HasUserId } from 'src/common/guards/has-user-id.guard';
 import { IsAuthGuard } from 'src/auth/guards/isAuth.guard';
 import { UserId } from 'src/users/decorators/user.decorator';
+import { QueryParams } from './dto/query-params.dto';
 @UseGuards(IsAuthGuard)
 @Controller('posts')
 export class PostsController {
@@ -16,8 +17,8 @@ export class PostsController {
   }
 
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(@Query() queryParamsDto: QueryParams) {
+    return this.postsService.findAll(queryParamsDto);
   }
 
   @Get(':id')
