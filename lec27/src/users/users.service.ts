@@ -32,8 +32,22 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const {address, age, email, fullName} = updateUserDto
+    console.log(address, "adress")
+    const user = await this.userModel.findByIdAndUpdate(
+      id,
+      {
+        address,
+        age,
+        email,
+        fullName
+      },
+      {
+        new: true
+      }
+    )
+    return user
   }
 
   remove(id: number) {
