@@ -16,16 +16,26 @@ export class ProductsService {
 
   async onModuleInit() {
     const count = await this.productModel.countDocuments()
+    await this.productModel.updateMany(
+      {$or: [{isSubsctibe: {'$exists': true}}]}, 
+      {$set: {
+        isGuarantee: true,
+        like: {'$mul': 1}
+      }}
+    )
+    console.log("udpated successfully")
     // await this.productModel.deleteMany()
     if(count === 0){
       const dataToInsert: any = []
-      for(let i = 0; i < 100_000; i++){
+      let i = 0
+      for(let i = 0; i < 200; i++){
         dataToInsert.push({
           name: faker.commerce.product(), 
           price: faker.number.int({min: 10, max: 300}),
           desc: faker.commerce.productDescription(),
           quantity: faker.number.int({min: 1, max: 20}),
-          imgUrl: faker.image.url()
+          imgUrl: faker.image.url(),
+          category: faker.commerce.department()
         })
       }
       await this.productModel.insertMany(dataToInsert)
@@ -54,9 +64,12 @@ export class ProductsService {
       filter.price = {...filter.price, '$lte': priceTo}
     }
     const products = await this.productModel
-      .find({price: 50}).explain()
-      // .skip((page - 1) * take)
-      // .limit(take)
+      .aggregate([
+        {$match: {price: {'$gte': 30}}},
+        {$group: {_id: '$category', totalPrice: {$max: '$price'}, total: {$count: 'name'}, id: { '$push': '$$ROOT' }} },
+        {$limit: 50},
+      ])
+
     return products
   }
 

@@ -1,4 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+enum Role {
+    "ADMIN"="admin",
+    "USER"= "user",
+    "EDITOR"= "editor",
+}
 
 @Schema({timestamps: true})
 export class Product {
@@ -9,10 +14,28 @@ export class Product {
     name: string
 
     @Prop({
+        enum: Role,
+        required: true,
+        default: Role.USER
+    })
+    role: Role
+
+    @Prop({
         type: String,
         required: true
     })
     desc: string
+
+    @Prop({
+        type: Boolean,
+    })
+    isGuarantee: boolean
+
+    @Prop({
+        type: String,
+        required: true
+    })
+    category: string
 
     @Prop({
         type: Number,
