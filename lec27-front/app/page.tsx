@@ -2,11 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
-import { axiosInstance } from "@/lib/axios-instance";
+import MarkdownRenderer from "@/components/ui/MarkdownRenderer";
+import { axiosInstance, createEventSource } from "@/lib/axios-instance";
 import { deleteCookie, getCookie } from "cookies-next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState, useRef } from "react";
 
 export default function Home() {
   const router = useRouter()
@@ -15,88 +16,144 @@ export default function Home() {
   const token = getCookie('token')
   const [page, setPage] = useState(1)
   const [paginationCount, setPaginationCount] = useState<number[]>([])
+  const [prompt, setPrompt] = useState('')
+  const [markDown, setMarkDown] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [visibleContent, setVisibleContent] = useState('')
+  const fullContentRef = useRef('')
+  const charIndexRef = useRef(0)
 
   if (!token) {
     router.push('/auth/sign-in')
     return null
   }
 
-  const getCurrentUser = async (token: string) => {
+  // Existing methods (getCurrentUser, getAllPosts, etc.)
+  
+  // Animation function to simulate typing
+  const animateTyping = () => {
+    if (charIndexRef.current < fullContentRef.current.length) {
+      setVisibleContent(prev => prev + fullContentRef.current.charAt(charIndexRef.current));
+      charIndexRef.current++;
+      
+      // Add variable timing for more natural feel
+      const delay = Math.floor(Math.random() * 10) + 5; // 5-15ms
+      setTimeout(animateTyping, delay);
+    }
+  };
+
+  // Update handleSubmit to use animation
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setMarkDown('');
+    setVisibleContent('');
+    fullContentRef.current = '';
+    charIndexRef.current = 0;
+    
     try {
-      const resp = await axiosInstance.get('/auth/current-user', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/ai/stream`, {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ prompt })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+      
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Response body is not readable');
+      }
+      
+      const decoder = new TextDecoder();
+      let streamedContent = '';
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n\n').filter(line => line.trim() !== '');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') {
+              setIsLoading(false);
+              break;
+            }
+            
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                streamedContent += parsed.content;
+                
+                // Update the full content reference
+                fullContentRef.current = streamedContent;
+                
+                // If this is the first chunk, start the animation
+                if (charIndexRef.current === 0) {
+                  animateTyping();
+                }
+                
+                // Store the full content for markdown rendering
+                setMarkDown(streamedContent);
+              } else if (parsed.error) {
+                console.error('Error from server:', parsed.error);
+                setIsLoading(false);
+              }
+            } catch (e) {
+              console.error('Error parsing data chunk:', e);
+            }
+          }
         }
-      })
-      if (resp.status === 200) {
-        setUser(resp.data)
       }
-    } catch (e) {
-      deleteCookie('token')
-      router.push('/auth/sign-in')
+    } catch (error) {
+      console.error('Error with streaming response:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }
-
-  const getAllPosts = async (token: string, page: number) => {
-    const resp = await axiosInstance.get(`/posts?page=${page}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    if (resp.status === 200) {
-      setPosts(resp.data)
-    }
-
-  }
-
-  useEffect(() => {
-    if (token) {
-      getCurrentUser(token as string)
-      getAllPosts(token as string, page)
-    }
-  }, [])
-
-  useEffect(() => {
-    if(posts?.total){
-      const count = Math.ceil(posts.total / posts.take)
-      const pageCount = []
-      for(let i = 1; i<= count; i++){
-        pageCount.push(i)
-      }
-      setPaginationCount(pageCount)
-    }
-  }, [posts])
-
-  const handleChangePage = async (page: number) => {
-    setPage(page)
-    await getAllPosts(token as string, page)
-    window?.scrollTo(0, 0)
-  }
-
-
+  };
 
   return (
-    <div>
-      <h1>hello wrold</h1>
-      <Link href={'#20'}>Anrias ro unda</Link>
-      <div className="grid grid-cols-3 gap-4">
-        {posts && posts.posts?.map((p: any, i: number) => (
-          <Card id={i.toString()} className="w-full">
-            <CardHeader>
-              {p.title}
-            </CardHeader>
-            <CardDescription>
-              {p.desc}
-            </CardDescription>
-          </Card>
-        ))}
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">AI Nutritionist</h1>
+      <form onSubmit={handleSubmit} className="mb-6">
+        <div className="flex gap-2">
+          <input 
+            type="text" 
+            placeholder="Ask about nutrition, diet plans, or healthy eating..." 
+            className="border-2 w-full h-12 rounded px-4"
+            onChange={(e) => setPrompt(e.target.value)}
+            value={prompt}
+            disabled={isLoading}
+          />
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Thinking...' : 'Ask'}
+          </Button>
+        </div>
+      </form>
+      
+      <div className="response-container relative rounded-lg border p-4 min-h-[200px]">
+        {isLoading && !visibleContent && (
+          <div className="flex items-center justify-center absolute inset-0">
+            <div className="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        )}
+        
+        <div className={`${isLoading || visibleContent ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200`}>
+          <MarkdownRenderer content={visibleContent} />
+        </div>
       </div>
-      {paginationCount.map(p => (
-        <Button onClick={() => handleChangePage(p)} variant={page === p ? 'destructive': 'default'} >{p}</Button>
-      ))}
-      <div className="mt-20"></div>
-
-      <div id="andria">Andrias ro unda </div>
     </div>
   );
 }

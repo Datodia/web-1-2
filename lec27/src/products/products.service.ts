@@ -14,34 +14,34 @@ export class ProductsService {
     @InjectModel('product') private productModel: Model<Product>
   ){}
 
-  async onModuleInit() {
-    const count = await this.productModel.countDocuments()
-    await this.productModel.updateMany(
-      {$or: [{isSubsctibe: {'$exists': true}}]}, 
-      {$set: {
-        isGuarantee: true,
-        like: {'$mul': 1}
-      }}
-    )
-    console.log("udpated successfully")
-    // await this.productModel.deleteMany()
-    if(count === 0){
-      const dataToInsert: any = []
-      let i = 0
-      for(let i = 0; i < 200; i++){
-        dataToInsert.push({
-          name: faker.commerce.product(), 
-          price: faker.number.int({min: 10, max: 300}),
-          desc: faker.commerce.productDescription(),
-          quantity: faker.number.int({min: 1, max: 20}),
-          imgUrl: faker.image.url(),
-          category: faker.commerce.department()
-        })
-      }
-      await this.productModel.insertMany(dataToInsert)
-    }
-    console.log('inseted successfully')
-  }
+  // async onModuleInit() {
+  //   const count = await this.productModel.countDocuments()
+  //   await this.productModel.updateMany(
+  //     {$or: [{isSubsctibe: {'$exists': true}}]}, 
+  //     {$set: {
+  //       isGuarantee: true,
+  //       like: {'$mul': 1}
+  //     }}
+  //   )
+  //   console.log("udpated successfully")
+  //   // await this.productModel.deleteMany()
+  //   if(count === 0){
+  //     const dataToInsert: any = []
+  //     let i = 0
+  //     for(let i = 0; i < 200; i++){
+  //       dataToInsert.push({
+  //         name: faker.commerce.product(), 
+  //         price: faker.number.int({min: 10, max: 300}),
+  //         desc: faker.commerce.productDescription(),
+  //         quantity: faker.number.int({min: 1, max: 20}),
+  //         imgUrl: faker.image.url(),
+  //         category: faker.commerce.department()
+  //       })
+  //     }
+  //     await this.productModel.insertMany(dataToInsert)
+  //   }
+  //   console.log('inseted successfully')
+  // }
 
   create(createProductDto: CreateProductDto) {
     return 'This action adds a new product';

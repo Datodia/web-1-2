@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { ProductsModule } from './products/products.module';
     UsersModule,
     PostsModule,
     AuthModule,
-    ProductsModule
+    ProductsModule,
+    AiModule
   ],
   controllers: [AppController],
   providers: [AppService],
