@@ -30,6 +30,22 @@ export class User {
     fullName: string
 
     @Prop({
+        type: Number,
+    })
+    OTPCode: number
+
+    @Prop({
+        type: String,
+    })
+    OTPValidationDate: String
+
+    @Prop({
+        type: Boolean,
+        default: false
+    })
+    isActive: boolean
+
+    @Prop({
         type: String,
         required: true,
         lowercase: true,
