@@ -1,0 +1,36 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type PostPayload {
+  title: String!
+  content: String!
+  author: UserPayload!
+}
+
+type UserPayload {
+  _id: ID!
+  fullName: String!
+  email: String!
+  posts: [PostPayload!]!
+}
+
+type Query {
+  getAllUsers: [UserPayload!]!
+  getAllPosts: [PostPayload!]!
+}
+
+type Mutation {
+  createUser(createUserDto: CreateUserDto!): UserPayload
+  createPost(createPostInput: CreatePostInput!): String!
+}
+
+input CreateUserDto {
+  fullName: String!
+  email: String!
+}
+
+input CreatePostInput {
+  title: String!
+  content: String!
+}
