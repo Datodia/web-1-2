@@ -30,6 +30,11 @@ export class User {
     fullName: string
 
     @Prop({
+        type: String,
+    })
+    avatar: string
+
+    @Prop({
         type: Number,
     })
     OTPCode: number
@@ -55,14 +60,12 @@ export class User {
 
     @Prop({
         type: String,
-        required: true,
         select: false
     })
     password: string
 
     @Prop({
         type: Number,
-        required: true
     })
     age: number
 

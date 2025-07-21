@@ -10,6 +10,7 @@ import { signUpSchema, SignUpType } from '@/validation/sign-up.schema'
 import { toast } from 'sonner'
 import { axiosInstance } from '@/lib/axios-instance'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function SignUp() {
     const router = useRouter()
@@ -104,6 +105,9 @@ export default function SignUp() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex-col gap-2 mt-4">
+                        <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google`} className="w-full">
+                            Continue with google
+                        </Link>
                         <Button type="submit" className="w-full">
                             Sign up
                         </Button>

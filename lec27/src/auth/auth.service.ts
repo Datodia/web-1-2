@@ -106,9 +106,22 @@ export class AuthService {
         return { token }
     }
 
+    async continueWithGoogle({fullName, email, avatar}){
+        let existUser = await this.userModel.findOne({email})
+        if(!existUser) existUser = await this.userModel.create({email, fullName, avatar, isActive: true})
+        
+        const payload = {
+            id: existUser._id
+        }
+        const token = this.jwtService.sign(payload, { expiresIn: '1h' })
+
+        return {redirectUrl: `${process.env.FRONT_URL}`, token}
+    }
+
     async getCurrentUser(userId) {
         console.log(userId, "userId")
         const user = await this.userModel.findById(userId)
+        if(!user) throw new NotFoundException('user not dfound')
         console.log(user, "user")
         return user
     }

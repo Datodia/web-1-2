@@ -12,6 +12,7 @@ import { axiosInstance } from '@/lib/axios-instance'
 import { useRouter } from 'next/navigation'
 import { signInSchema, SignInType } from '@/validation/sign-in.schema'
 import { setCookie } from 'cookies-next'
+import Link from 'next/link'
 
 export default function SignIn() {
     const router = useRouter()
@@ -24,31 +25,31 @@ export default function SignIn() {
         resolver: yupResolver(signInSchema),
     })
 
-    const onSubmit = async ({ email, password}: SignInType) => {
-        try{
+    const onSubmit = async ({ email, password }: SignInType) => {
+        try {
             const resp = await axiosInstance.post('/auth/sign-in', {
                 email,
                 password
             })
-            if(resp.status === 201){
+            if (resp.status === 201) {
                 toast.success('logged in successfully')
-                setCookie('token', resp.data.token, {maxAge: 60 * 60})
+                setCookie('token', resp.data.token, { maxAge: 60 * 60 })
                 router.push('/')
                 return
             }
             toast.error(resp.data.message)
-        }catch(e: any){
-            if(typeof e.response.data.message === 'string'){
+        } catch (e: any) {
+            if (typeof e.response.data.message === 'string') {
                 toast.error(e.response.data.message)
             }
-            if(typeof e.response.data.message === 'object' && Array.isArray(e.response.data.message)){
+            if (typeof e.response.data.message === 'object' && Array.isArray(e.response.data.message)) {
                 toast.error(e.response.data.message.map((e: string) => e))
             }
         }
     }
 
     useEffect(() => {
-        if(Object.keys(errors)){
+        if (Object.keys(errors)) {
             toast.error('Fill requerd fields')
         }
     }, [errors])
@@ -84,6 +85,9 @@ export default function SignIn() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex-col gap-2 mt-4">
+                        <Link href={`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google`} className="w-full">
+                            Continue with google
+                        </Link>
                         <Button type="submit" className="w-full">
                             Sign In
                         </Button>
