@@ -90,6 +90,10 @@ export class AuthService {
             throw new BadRequestException('invalid credentials')
         }
 
+        if(!existUser.password) {
+            throw new BadRequestException('Try login with google')
+        }
+
         const isPassEqual = await bcrypt.compare(password, existUser.password)
         if (!isPassEqual) {
             throw new BadRequestException('invalid credentials')

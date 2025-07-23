@@ -86,6 +86,9 @@ let AuthService = class AuthService {
         if (!existUser) {
             throw new common_1.BadRequestException('invalid credentials');
         }
+        if (!existUser.password) {
+            throw new common_1.BadRequestException('Try login with google');
+        }
         const isPassEqual = await bcrypt.compare(password, existUser.password);
         if (!isPassEqual) {
             throw new common_1.BadRequestException('invalid credentials');

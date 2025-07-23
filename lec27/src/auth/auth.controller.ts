@@ -7,11 +7,23 @@ import { UserId } from 'src/users/decorators/user.decorator';
 import { VerifyEmailDTO } from './dto/verify-email.dto';
 import { GoogleAuth } from './guards/google.guard';
 import { Response } from 'express';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiResponse({
+    status: 201,
+    schema: {
+      example: 'check email for validation'
+    }
+  })
+  @ApiBadRequestResponse({
+    schema: {
+      example: 'User aledy exists'
+    }
+  })
   @Post('sign-up')
   signUp(@Body() signUpDto: SignUpDto){
     return this.authService.signUp(signUpDto)
@@ -40,11 +52,30 @@ export class AuthController {
     return this.authService.resendOTPCode(email)
   }
 
+  @ApiResponse({
+    status: 201,
+    schema: {
+      example: 'token'
+    }
+  })
+  @ApiBadRequestResponse({
+    schema: {
+      example: 'invalid errors'
+    }
+  })
+
+  @ApiResponse({
+    status: 401,
+    schema: {
+      example: 'verify email'
+    }
+  })
   @Post('sign-in')
   signIn(@Body() signInDto: SignInDto){
     return this.authService.signIn(signInDto)
   }
 
+  @ApiBearerAuth()
   @Get('current-user')
   @UseGuards(IsAuthGuard)
   getCurrentUser(@UserId() userId){

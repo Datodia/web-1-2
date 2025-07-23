@@ -21,6 +21,7 @@ const isAuth_guard_1 = require("./guards/isAuth.guard");
 const user_decorator_1 = require("../users/decorators/user.decorator");
 const verify_email_dto_1 = require("./dto/verify-email.dto");
 const google_guard_1 = require("./guards/google.guard");
+const swagger_1 = require("@nestjs/swagger");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -50,6 +51,17 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
+    (0, swagger_1.ApiResponse)({
+        status: 201,
+        schema: {
+            example: 'check email for validation'
+        }
+    }),
+    (0, swagger_1.ApiBadRequestResponse)({
+        schema: {
+            example: 'User aledy exists'
+        }
+    }),
     (0, common_1.Post)('sign-up'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -87,6 +99,23 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "verficationCode", null);
 __decorate([
+    (0, swagger_1.ApiResponse)({
+        status: 201,
+        schema: {
+            example: 'token'
+        }
+    }),
+    (0, swagger_1.ApiBadRequestResponse)({
+        schema: {
+            example: 'invalid errors'
+        }
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 401,
+        schema: {
+            example: 'verify email'
+        }
+    }),
     (0, common_1.Post)('sign-in'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -94,6 +123,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "signIn", null);
 __decorate([
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Get)('current-user'),
     (0, common_1.UseGuards)(isAuth_guard_1.IsAuthGuard),
     __param(0, (0, user_decorator_1.UserId)()),

@@ -20,6 +20,7 @@ const update_post_dto_1 = require("./dto/update-post.dto");
 const isAuth_guard_1 = require("../auth/guards/isAuth.guard");
 const user_decorator_1 = require("../users/decorators/user.decorator");
 const query_params_dto_1 = require("./dto/query-params.dto");
+const swagger_1 = require("@nestjs/swagger");
 let PostsController = class PostsController {
     postsService;
     constructor(postsService) {
@@ -51,6 +52,9 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PostsController.prototype, "create", null);
 __decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiQuery)({ name: 'page', required: false, example: 1, default: 1 }),
+    (0, swagger_1.ApiQuery)({ name: 'take', required: false, example: 30, default: 30 }),
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
@@ -58,6 +62,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PostsController.prototype, "findAll", null);
 __decorate([
+    (0, swagger_1.ApiParam)({ name: 'id', type: String, description: 'The moongodb ID of the user', example: '12345', }),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
